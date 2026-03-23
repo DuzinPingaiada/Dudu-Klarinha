@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Infinity OS | Eduardo & Klara</title>
     
-    <!-- PWA -->
     <meta name="theme-color" content="#030306">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Infinity OS">
     <meta name="description" content="Sistema financeiro premium para casais - Eduardo & Klara">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%236366f1'/><stop offset='50%25' stop-color='%238b5cf6'/><stop offset='100%25' stop-color='%23ec4899'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='68' font-size='48' text-anchor='middle' fill='white' font-weight='bold' font-style='italic'>∞</text></svg>" type="image/svg+xml">
     <link rel="manifest" id="manifest-link">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +19,21 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <script>
+        window.firebaseConfig = {
+            apiKey: "AIzaSyCzHVOPtUduYzTL8dmAf2RkUP7f7nyCNs0",
+            authDomain: "infinity-os-ba26f.firebaseapp.com",
+            projectId: "infinity-os-ba26f",
+            storageBucket: "infinity-os-ba26f.firebasestorage.app",
+            messagingSenderId: "112514195514",
+            appId: "1:112514195514:web:1459603627316ce7355503",
+            measurementId: "G-GTNKR29H8H"
+        };
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
     <script>
         tailwind.config = {
@@ -41,18 +57,15 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030306; color: #e2e8f0; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* ===== SCROLLBAR ===== */
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.15); border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.3); }
 
-        /* ===== GLASS MORPHISM ===== */
         .glass { background: rgba(255,255,255,0.02); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
         .glass:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
         .glass-solid { background: rgba(10,10,15,0.8); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.06); }
 
-        /* ===== SIDEBAR ===== */
         .sidebar-item { position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); border-left: 3px solid transparent; }
         .sidebar-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:0; background: linear-gradient(90deg, rgba(99,102,241,0.12), transparent); transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
         .sidebar-item.active { color: white; border-left-color: #6366f1; background: rgba(99,102,241,0.05); }
@@ -60,18 +73,16 @@
         .sidebar-item:not(.active):hover { color: #cbd5e1; }
         .sidebar-item:not(.active):hover::before { width: 50%; }
 
-        /* ===== VIEWS ===== */
         .view-section { display: none; opacity: 0; transform: translateY(12px); }
         .view-section.active { display: block; animation: viewSlideUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
         @keyframes viewSlideUp { to { opacity:1; transform:translateY(0); } }
 
-        /* ===== INPUTS ===== */
+        .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
         .input-field { background: rgba(255,255,255,0.03)!important; color:#e2e8f0!important; border:1px solid rgba(255,255,255,0.08)!important; outline:none!important; transition:all 0.3s ease!important; appearance:none; -webkit-appearance:none; font-family:'Plus Jakarta Sans',sans-serif; }
         .input-field::placeholder { color: rgba(255,255,255,0.2); }
         .input-field:focus { border-color: rgba(99,102,241,0.5)!important; box-shadow: 0 0 0 3px rgba(99,102,241,0.08), 0 0 20px rgba(99,102,241,0.05)!important; background: rgba(255,255,255,0.04)!important; }
         select.input-field option { background: #0a0a0f; color: #e2e8f0; }
 
-        /* ===== BUTTONS ===== */
         .btn-primary { background: linear-gradient(135deg,#6366f1,#4f46e5); color:white; font-weight:800; border:none; cursor:pointer; position:relative; overflow:hidden; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); letter-spacing: 0.02em; }
         .btn-primary::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent); opacity:0; transition:opacity 0.3s; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.35); }
@@ -89,7 +100,6 @@
         .btn-outline:hover { border-color: rgba(99,102,241,0.5); color: #a5b4fc; }
         .btn-outline.active { border-color: #6366f1; color: #a5b4fc; background: rgba(99,102,241,0.1); }
 
-        /* ===== TOASTS ===== */
         .toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
         .toast { padding:14px 22px; border-radius:16px; font-size:12px; font-weight:600; backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,0.08); transform:translateX(130%); animation:toastSlideIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; display:flex; align-items:center; gap:10px; pointer-events:all; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
         .toast.out { animation: toastSlideOut 0.4s ease forwards; }
@@ -100,69 +110,54 @@
         .toast-info { background:rgba(99,102,241,0.12); color:#a5b4fc; border-color: rgba(99,102,241,0.15); }
         .toast-warning { background:rgba(245,158,11,0.12); color:#fbbf24; border-color: rgba(245,158,11,0.15); }
 
-        /* ===== MODALS ===== */
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); z-index:100; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:all 0.3s ease; padding: 1rem; }
         .modal-overlay.active { opacity:1; pointer-events:all; }
         .modal-overlay.active .modal-content { transform:scale(1) translateY(0); }
         .modal-content { background: linear-gradient(180deg, #0c0c14, #080810); border:1px solid rgba(255,255,255,0.08); border-radius:2rem; padding:2rem; max-width:440px; width:100%; transform:scale(0.92) translateY(15px); transition:all 0.45s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
 
-        /* ===== GLOW EFFECTS ===== */
         .glow-indigo { box-shadow: 0 0 50px rgba(99,102,241,0.06), inset 0 1px 0 rgba(255,255,255,0.04); }
         .glow-green { box-shadow: 0 0 50px rgba(16,185,129,0.06), inset 0 1px 0 rgba(255,255,255,0.04); }
         .glow-red { box-shadow: 0 0 50px rgba(239,68,68,0.06), inset 0 1px 0 rgba(255,255,255,0.04); }
         .glow-pink { box-shadow: 0 0 50px rgba(236,72,153,0.06), inset 0 1px 0 rgba(255,255,255,0.04); }
 
-        /* ===== EMPTY STATE ===== */
         .empty-state { text-align:center; padding:3.5rem 2rem; color:rgba(255,255,255,0.1); }
 
-        /* ===== CATEGORY CHIPS ===== */
         .cat-chip { display:inline-flex; align-items:center; gap:6px; padding:7px 15px; border-radius:12px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); transition:all 0.25s cubic-bezier(0.4,0,0.2,1); }
         .cat-chip:hover { border-color: rgba(99,102,241,0.25); background: rgba(99,102,241,0.04); transform: translateY(-1px); }
         .cat-chip.active { border-color: #6366f1; background: rgba(99,102,241,0.12); color: #a5b4fc; box-shadow: 0 0 20px rgba(99,102,241,0.08); }
 
-        /* ===== PIGGY CARDS ===== */
         .piggy-card { position:relative; overflow:hidden; }
         .piggy-card .progress-fill { transition: width 1s cubic-bezier(0.16,1,0.3,1); }
         .piggy-card::before { content:''; position:absolute; top:0; right:0; width:120px; height:120px; background:radial-gradient(circle, rgba(99,102,241,0.06), transparent 70%); pointer-events:none; }
 
-        /* ===== FILTER CHIPS ===== */
         .filter-chip { padding:7px 18px; border-radius:12px; font-size:10px; font-weight:700; cursor:pointer; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#64748b; transition:all 0.25s cubic-bezier(0.4,0,0.2,1); text-transform:uppercase; letter-spacing:0.06em; }
         .filter-chip:hover { border-color: rgba(99,102,241,0.3); color: #94a3b8; background: rgba(99,102,241,0.03); }
         .filter-chip.active { border-color: #6366f1; background: rgba(99,102,241,0.1); color: #a5b4fc; }
 
-        /* ===== STAT CARD ANIMATION ===== */
         .stat-card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
         .stat-card:hover { transform: translateY(-3px); }
 
-        /* ===== TABLE ROWS ===== */
         .table-row { transition: all 0.2s ease; }
         .table-row:hover { background: rgba(255,255,255,0.02); }
 
-        /* ===== TIMELINE ===== */
         .timeline-card { position:relative; overflow:hidden; }
         .timeline-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px; }
         .timeline-sexta::before { background: linear-gradient(180deg, #8b5cf6, #6366f1); }
         .timeline-sabado::before { background: linear-gradient(180deg, #f59e0b, #f97316); }
         .timeline-domingo::before { background: linear-gradient(180deg, #10b981, #14b8a6); }
 
-        /* ===== COUNTER ANIMATION ===== */
         .counter-value { transition: all 0.5s cubic-bezier(0.4,0,0.2,1); }
 
-        /* ===== PULSE DOT ===== */
         .pulse-dot { animation: pulseDot 2s infinite; }
         @keyframes pulseDot { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.5; transform:scale(1.5); } }
 
-        /* ===== SKELETON LOADING ===== */
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
         @keyframes shimmer { 0%{ background-position:200% 0; } 100%{ background-position:-200% 0; } }
 
-        /* ===== DIVIDER ===== */
         .divider { height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
 
-        /* ===== BADGE ===== */
         .badge { display:inline-flex; align-items:center; gap:4px; font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; padding:3px 8px; border-radius:6px; }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .sidebar-desktop { display: none!important; }
             .mobile-nav { display: flex!important; }
@@ -174,27 +169,53 @@
             .mobile-nav { display: none!important; }
         }
 
-        /* ===== PWA INSTALL ===== */
         .install-banner { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); z-index:90; background:linear-gradient(135deg,rgba(99,102,241,0.95),rgba(79,70,229,0.95)); backdrop-filter:blur(20px); padding:14px 26px; border-radius:18px; display:none; align-items:center; gap:14px; font-size:12px; font-weight:700; color:white; box-shadow:0 12px 40px rgba(99,102,241,0.35); border:1px solid rgba(255,255,255,0.1); }
 
-        /* ===== NOTIFICATION DOT ===== */
         .notif-dot { position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:#ef4444; border-radius:50%; border:2px solid #060609; }
 
-        /* ===== SAFE AREA ===== */
         .safe-area-bottom { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
 
-        /* ===== PRINT ===== */
         @media print {
             body { background: white; color: black; }
             .sidebar-desktop, .mobile-nav, .install-banner, .toast-container { display: none!important; }
         }
+
+        #login-screen { position:fixed; inset:0; background:linear-gradient(180deg,#030306 0%,#060609 50%,#0a0a0f 100%); display:flex; align-items:center; justify-content:center; z-index:200; padding:1.5rem; }
+        #login-screen.hidden { display:none; }
+        .login-box { max-width:400px; width:100%; background:linear-gradient(180deg,#0c0c14,#080810); border:1px solid rgba(255,255,255,0.08); border-radius:2rem; padding:2.5rem; box-shadow:0 25px 60px rgba(0,0,0,0.5); }
+        .login-logo { width:70px; height:70px; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:1.5rem; display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:900; color:white; font-style:italic; margin:0 auto 1.25rem; }
+        .login-title { text-align:center; font-size:1.5rem; font-weight:800; margin-bottom:0.25rem; }
+        .login-subtitle { text-align:center; font-size:11px; color:#64748b; margin-bottom:1.5rem; }
+        .login-error { background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.2); padding:10px 14px; border-radius:12px; font-size:12px; margin-bottom:1rem; display:none; }
+        .login-error.visible { display:block; }
+        .login-loading { opacity:0.7; pointer-events:none; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- ===== CONFIRM MODAL ===== -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">∞</div>
+            <h1 class="login-title">Infinity OS</h1>
+            <p class="login-subtitle">Eduardo & Klara • Faça login para gerenciar suas finanças juntos</p>
+            <div id="login-error" class="login-error"></div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-email" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">E-mail</label>
+                    <input type="email" id="login-email" class="input-field w-full p-3.5 rounded-xl text-sm" placeholder="seu@email.com" required autocomplete="email">
+                </div>
+                <div>
+                    <label for="login-password" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Senha</label>
+                    <input type="password" id="login-password" class="input-field w-full p-3.5 rounded-xl text-sm" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" id="login-btn" class="btn-primary w-full py-3.5 rounded-xl text-sm"><span><i class="fa-solid fa-right-to-bracket mr-2"></i>Entrar</span></button>
+            </form>
+            <p class="text-center text-[10px] text-gray-600 mt-4">Usem o mesmo e-mail e senha para acessar a conta compartilhada</p>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal-content text-center">
             <div class="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
@@ -209,7 +230,6 @@
         </div>
     </div>
 
-    <!-- ===== PIGGY MODAL ===== -->
     <div class="modal-overlay" id="piggy-modal">
         <div class="modal-content">
             <div class="flex items-center gap-3 mb-6">
@@ -223,15 +243,15 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nome da Meta</label>
+                    <label for="piggy-name" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nome da Meta</label>
                     <input type="text" id="piggy-name" placeholder="Ex: Viagem Gramado" class="input-field w-full p-3.5 rounded-xl text-sm" maxlength="40">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor Objetivo (R$)</label>
+                    <label for="piggy-goal" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor Objetivo (R$)</label>
                     <input type="number" id="piggy-goal" placeholder="5000" class="input-field w-full p-3.5 rounded-xl text-sm font-bold" min="1" step="0.01">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Ícone</label>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Ícone</span>
                     <div class="flex gap-2 flex-wrap" id="piggy-icons">
                         <button class="piggy-icon-btn text-xl p-2.5 rounded-xl border border-white/10 hover:border-indigo-500/50 transition-all cursor-pointer" data-icon="✈️">✈️</button>
                         <button class="piggy-icon-btn text-xl p-2.5 rounded-xl border border-white/10 hover:border-indigo-500/50 transition-all cursor-pointer" data-icon="🏠">🏠</button>
@@ -248,7 +268,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Cor do Card</label>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Cor do Card</span>
                     <div class="flex gap-2" id="piggy-colors">
                         <button class="piggy-color-btn w-8 h-8 rounded-lg border-2 border-transparent hover:scale-110 transition-all cursor-pointer" data-color="indigo" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"></button>
                         <button class="piggy-color-btn w-8 h-8 rounded-lg border-2 border-transparent hover:scale-110 transition-all cursor-pointer" data-color="green" style="background:linear-gradient(135deg,#10b981,#059669)"></button>
@@ -265,7 +285,6 @@
         </div>
     </div>
 
-    <!-- ===== DEPOSIT MODAL ===== -->
     <div class="modal-overlay" id="deposit-modal">
         <div class="modal-content">
             <div class="flex items-center gap-3 mb-6">
@@ -279,11 +298,11 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor do Depósito (R$)</label>
-                    <input type="number" id="deposit-val" placeholder="100.00" class="input-field w-full p-3.5 rounded-xl text-sm font-bold text-center text-lg" min="0.01" step="0.01">
+                    <label for="deposit-val" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor do Depósito (R$)</label>
+                    <input type="number" id="deposit-val" placeholder="100.00" class="input-field w-full p-3.5 rounded-xl text-lg font-bold text-center" min="0.01" step="0.01">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Quem deposita?</label>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Quem deposita?</span>
                     <div class="flex gap-3">
                         <button class="deposit-who-btn flex-1 py-3.5 rounded-xl text-xs font-bold border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 cursor-pointer transition-all hover:bg-indigo-500/20" data-who="Eduardo">
                             <i class="fa-solid fa-user mr-1.5"></i>Eduardo
@@ -294,7 +313,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nota (opcional)</label>
+                    <label for="deposit-note" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nota (opcional)</label>
                     <input type="text" id="deposit-note" placeholder="Ex: Parte do salário" class="input-field w-full p-3 rounded-xl text-xs" maxlength="60">
                 </div>
                 <div class="flex gap-3 mt-3">
@@ -305,7 +324,6 @@
         </div>
     </div>
 
-    <!-- ===== WITHDRAW MODAL ===== -->
     <div class="modal-overlay" id="withdraw-modal">
         <div class="modal-content">
             <div class="flex items-center gap-3 mb-6">
@@ -319,11 +337,11 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor da Retirada (R$)</label>
-                    <input type="number" id="withdraw-val" placeholder="50.00" class="input-field w-full p-3.5 rounded-xl text-sm font-bold text-center text-lg" min="0.01" step="0.01">
+                    <label for="withdraw-val" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor da Retirada (R$)</label>
+                    <input type="number" id="withdraw-val" placeholder="50.00" class="input-field w-full p-3.5 rounded-xl text-lg font-bold text-center" min="0.01" step="0.01">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Motivo (opcional)</label>
+                    <label for="withdraw-note" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Motivo (opcional)</label>
                     <input type="text" id="withdraw-note" placeholder="Ex: Emergência" class="input-field w-full p-3 rounded-xl text-xs" maxlength="60">
                 </div>
                 <div class="flex gap-3 mt-3">
@@ -334,7 +352,6 @@
         </div>
     </div>
 
-    <!-- ===== EDIT TRANSACTION MODAL ===== -->
     <div class="modal-overlay" id="edit-modal">
         <div class="modal-content">
             <div class="flex items-center gap-3 mb-6">
@@ -348,23 +365,23 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Descrição</label>
+                    <label for="edit-desc" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Descrição</label>
                     <input type="text" id="edit-desc" class="input-field w-full p-3.5 rounded-xl text-sm">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor (R$)</label>
+                    <label for="edit-val" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Valor (R$)</label>
                     <input type="number" id="edit-val" class="input-field w-full p-3.5 rounded-xl text-sm font-bold" min="0.01" step="0.01">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Quem</label>
+                        <label for="edit-who" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Quem</label>
                         <select id="edit-who" class="input-field w-full p-3 rounded-xl text-xs">
                             <option value="Eduardo">Eduardo</option>
                             <option value="Klara">Klara</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Data</label>
+                        <label for="edit-date" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Data</label>
                         <input type="date" id="edit-date" class="input-field w-full p-3 rounded-xl text-xs">
                     </div>
                 </div>
@@ -376,7 +393,6 @@
         </div>
     </div>
 
-    <!-- ===== EXPORT MODAL ===== -->
     <div class="modal-overlay" id="export-modal">
         <div class="modal-content">
             <div class="flex items-center gap-3 mb-6">
@@ -402,7 +418,6 @@
         </div>
     </div>
 
-    <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal-content">
             <div class="flex items-center gap-3 mb-6">
@@ -416,11 +431,11 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nome Parceiro 1</label>
+                    <label for="set-name1" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nome Parceiro 1</label>
                     <input type="text" id="set-name1" value="Eduardo" class="input-field w-full p-3 rounded-xl text-sm" maxlength="20">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nome Parceiro 2</label>
+                    <label for="set-name2" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Nome Parceiro 2</label>
                     <input type="text" id="set-name2" value="Klara" class="input-field w-full p-3 rounded-xl text-sm" maxlength="20">
                 </div>
                 <div class="divider my-4"></div>
@@ -429,7 +444,7 @@
                         <p class="text-xs font-bold">Notificações Sonoras</p>
                         <p class="text-[9px] text-gray-500">Som ao registrar transações</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label for="set-sound" class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="set-sound" class="sr-only peer" checked>
                         <div class="w-9 h-5 bg-gray-700 rounded-full peer peer-checked:bg-indigo-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"></div>
                     </label>
@@ -450,7 +465,8 @@
         </div>
     </div>
 
-    <!-- ===== PWA INSTALL BANNER ===== -->
+    <div id="app-content" class="flex flex-1 overflow-hidden" style="display:none !important;">
+
     <div class="install-banner" id="install-banner">
         <i class="fa-solid fa-download"></i>
         <span>Instalar no celular</span>
@@ -458,7 +474,6 @@
         <button id="install-close" class="ml-1 opacity-60 hover:opacity-100 cursor-pointer text-lg"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <!-- ======== SIDEBAR ======== -->
     <aside class="sidebar-desktop w-[260px] border-r border-white/[0.06] bg-[#060609] flex flex-col z-50">
         <div class="p-6 flex items-center gap-3">
             <div class="w-11 h-11 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center font-black text-white text-lg shadow-lg shadow-indigo-500/25 italic">∞</div>
@@ -504,7 +519,6 @@
         </div>
     </aside>
 
-    <!-- ======== MAIN ======== -->
     <main class="flex-1 flex flex-col overflow-hidden">
         <header class="h-16 border-b border-white/[0.06] flex items-center justify-between px-5 md:px-8 bg-[#030306]/80 backdrop-blur-xl z-40">
             <div class="flex items-center gap-4">
@@ -524,6 +538,9 @@
                 <button id="btn-settings-header" class="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-gray-500 hover:text-white hover:border-white/10 transition cursor-pointer text-xs">
                     <i class="fa-solid fa-gear"></i>
                 </button>
+                <button id="btn-logout" class="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-gray-500 hover:text-red-400 hover:border-red-500/30 transition cursor-pointer text-xs" title="Sair">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
             </div>
         </header>
 
@@ -531,7 +548,6 @@
 
             <!-- ============ DASHBOARD ============ -->
             <section id="view-dashboard" class="view-section active space-y-6">
-                <!-- Welcome -->
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-xl md:text-2xl font-extrabold tracking-tight" id="dash-greeting">Boa noite! 🌙</h3>
@@ -547,7 +563,6 @@
                     </div>
                 </div>
 
-                <!-- Stats Grid -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     <div class="stat-card glass p-5 rounded-2xl glow-indigo col-span-2 md:col-span-1">
                         <div class="flex items-center justify-between mb-3">
@@ -583,7 +598,6 @@
                     </div>
                 </div>
 
-                <!-- Charts + Info -->
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
                     <div class="lg:col-span-3 glass p-6 rounded-2xl">
                         <div class="flex items-center justify-between mb-5">
@@ -593,7 +607,6 @@
                         <div class="h-56 md:h-64"><canvas id="categoryChart"></canvas></div>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
-                        <!-- Balance Comparison -->
                         <div class="glass p-5 rounded-2xl">
                             <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-4">Balanço do Casal</h4>
                             <div class="space-y-3">
@@ -617,14 +630,12 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Next Activity -->
                         <div class="glass p-5 rounded-2xl">
                             <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-4">Próxima Atividade</h4>
                             <div id="dash-next-act">
                                 <p class="text-[10px] text-gray-600 text-center py-3">Nenhuma planejada</p>
                             </div>
                         </div>
-                        <!-- Recent -->
                         <div class="glass p-5 rounded-2xl">
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Últimas Transações</h4>
@@ -635,7 +646,6 @@
                     </div>
                 </div>
 
-                <!-- Monthly Chart -->
                 <div class="glass p-6 rounded-2xl">
                     <div class="flex items-center justify-between mb-5">
                         <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Evolução Mensal</h4>
@@ -648,9 +658,7 @@
                 </div>
             </section>
 
-            <!-- ============ FINANCEIRO ============ -->
             <section id="view-finances" class="view-section space-y-6">
-                <!-- Quick Add -->
                 <div class="glass rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-5">
                         <div class="flex items-center gap-3">
@@ -662,15 +670,22 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                        <input type="text" id="fin-desc" placeholder="Descrição" class="input-field col-span-2 p-3.5 rounded-xl text-sm" maxlength="60">
-                        <div class="relative">
-                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-400 text-xs font-bold">R$</span>
-                            <input type="number" id="fin-val" placeholder="0,00" class="input-field w-full p-3.5 pl-10 rounded-xl text-sm font-bold" min="0.01" step="0.01">
+                        <div class="col-span-2">
+                            <label for="fin-desc" class="sr-only">Descrição</label>
+                            <input type="text" id="fin-desc" placeholder="Descrição" class="input-field w-full p-3.5 rounded-xl text-sm" maxlength="60" aria-label="Descrição do lançamento">
                         </div>
-                        <select id="fin-who" class="input-field p-3.5 rounded-xl text-xs font-medium">
+                        <div class="relative">
+                            <label for="fin-val" class="sr-only">Valor</label>
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-400 text-xs font-bold">R$</span>
+                            <input type="number" id="fin-val" placeholder="0,00" class="input-field w-full p-3.5 pl-10 rounded-xl text-sm font-bold" min="0.01" step="0.01" aria-label="Valor em reais">
+                        </div>
+                        <div>
+                            <label for="fin-who" class="sr-only">Quem</label>
+                            <select id="fin-who" class="input-field w-full p-3.5 rounded-xl text-xs font-medium" aria-label="Quem fez o lançamento">
                             <option value="Eduardo">👤 Eduardo</option>
                             <option value="Klara">👤 Klara</option>
                         </select>
+                        </div>
                     </div>
                     
                     <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -682,11 +697,11 @@
                                 <i class="fa-solid fa-arrow-down mr-1"></i>Entrada
                             </button>
                         </div>
-                        <label class="flex items-center gap-2.5 px-4 py-2.5 bg-indigo-500/5 rounded-xl border border-indigo-500/10 cursor-pointer hover:bg-indigo-500/10 transition">
+                        <label for="fin-shared" class="flex items-center gap-2.5 px-4 py-2.5 bg-indigo-500/5 rounded-xl border border-indigo-500/10 cursor-pointer hover:bg-indigo-500/10 transition">
                             <input type="checkbox" id="fin-shared" class="w-3.5 h-3.5 rounded accent-indigo-500">
                             <span class="text-[10px] font-bold text-indigo-400 uppercase">Dividir 50/50</span>
                         </label>
-                        <label class="flex items-center gap-2.5 px-4 py-2.5 bg-amber-500/5 rounded-xl border border-amber-500/10 cursor-pointer hover:bg-amber-500/10 transition">
+                        <label for="fin-recurring" class="flex items-center gap-2.5 px-4 py-2.5 bg-amber-500/5 rounded-xl border border-amber-500/10 cursor-pointer hover:bg-amber-500/10 transition">
                             <input type="checkbox" id="fin-recurring" class="w-3.5 h-3.5 rounded accent-amber-500">
                             <span class="text-[10px] font-bold text-amber-400 uppercase">Recorrente</span>
                         </label>
@@ -700,7 +715,6 @@
                     <button id="btn-register" class="btn-primary w-full md:w-auto px-10 py-3.5 rounded-xl text-xs tracking-wider"><span><i class="fa-solid fa-check mr-2"></i>REGISTRAR LANÇAMENTO</span></button>
                 </div>
 
-                <!-- Filters -->
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex flex-wrap gap-2">
                         <button data-filter="all" class="filter-btn filter-chip active">Todos</button>
@@ -712,11 +726,11 @@
                     </div>
                     <div class="ml-auto flex items-center gap-3">
                         <span id="fin-count" class="text-[10px] text-gray-600 font-medium tabular-nums">0 registros</span>
-                        <input type="text" id="fin-search" placeholder="Buscar..." class="input-field px-3 py-1.5 rounded-lg text-[10px] w-32 hidden md:block">
+                        <label for="fin-search" class="sr-only">Buscar transações</label>
+                        <input type="text" id="fin-search" placeholder="Buscar..." class="input-field px-3 py-1.5 rounded-lg text-[10px] w-32 hidden md:block" aria-label="Buscar transações">
                     </div>
                 </div>
 
-                <!-- Transactions Table -->
                 <div class="glass rounded-2xl overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left min-w-[650px]">
@@ -741,7 +755,6 @@
                 </div>
             </section>
 
-            <!-- ============ CAIXINHAS ============ -->
             <section id="view-piggy" class="view-section space-y-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -766,7 +779,6 @@
                 </div>
             </section>
 
-            <!-- ============ ROTEIRO FDS ============ -->
             <section id="view-weekend" class="view-section space-y-6">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div>
@@ -785,20 +797,30 @@
                     </div>
                 </div>
 
-                <!-- Add Activity -->
                 <div class="glass rounded-2xl p-5">
                     <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
-                        <input type="text" id="w-act" placeholder="Atividade" class="input-field col-span-2 p-3.5 rounded-xl text-sm" maxlength="40">
-                        <input type="text" id="w-loc" placeholder="Local" class="input-field p-3.5 rounded-xl text-sm" maxlength="30">
-                        <select id="w-day" class="input-field p-3.5 rounded-xl text-xs font-medium">
-                            <option>Sexta</option><option>Sábado</option><option>Domingo</option>
-                        </select>
-                        <input type="number" id="w-cost" placeholder="R$ Custo" class="input-field p-3.5 rounded-xl text-sm font-bold" min="0" step="0.01">
+                        <div class="col-span-2">
+                            <label for="w-act" class="sr-only">Atividade</label>
+                            <input type="text" id="w-act" placeholder="Atividade" class="input-field w-full p-3.5 rounded-xl text-sm" maxlength="40" aria-label="Nome da atividade">
+                        </div>
+                        <div>
+                            <label for="w-loc" class="sr-only">Local</label>
+                            <input type="text" id="w-loc" placeholder="Local" class="input-field w-full p-3.5 rounded-xl text-sm" maxlength="30" aria-label="Local da atividade">
+                        </div>
+                        <div>
+                            <label for="w-day" class="sr-only">Dia</label>
+                            <select id="w-day" class="input-field w-full p-3.5 rounded-xl text-xs font-medium" aria-label="Dia da semana">
+                                <option>Sexta</option><option>Sábado</option><option>Domingo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="w-cost" class="sr-only">Custo</label>
+                            <input type="number" id="w-cost" placeholder="R$ Custo" class="input-field w-full p-3.5 rounded-xl text-sm font-bold" min="0" step="0.01" aria-label="Custo em reais">
+                        </div>
                         <button id="btn-add-w" class="btn-primary py-3.5 rounded-xl text-xs"><span><i class="fa-solid fa-plus mr-1"></i>Adicionar</span></button>
                     </div>
                 </div>
 
-                <!-- Timeline -->
                 <div id="w-timeline" class="space-y-4"></div>
                 <div id="w-empty" class="glass rounded-2xl hidden">
                     <div class="empty-state">
@@ -808,7 +830,6 @@
                     </div>
                 </div>
                 
-                <!-- Clear Weekend -->
                 <div class="flex justify-center" id="w-clear-wrap" style="display:none">
                     <button id="btn-clear-weekend" class="btn-danger px-6 py-2.5 rounded-xl text-[10px] font-bold">
                         <i class="fa-solid fa-broom mr-2"></i>Limpar Roteiro
@@ -816,7 +837,6 @@
                 </div>
             </section>
 
-            <!-- ============ HISTÓRICO ============ -->
             <section id="view-history" class="view-section space-y-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -842,7 +862,6 @@
 
         </div>
 
-        <!-- MOBILE NAV -->
         <nav class="mobile-nav fixed bottom-0 left-0 right-0 bg-[#060609]/95 backdrop-blur-xl border-t border-white/[0.06] flex justify-around py-2 z-50 safe-area-bottom">
             <button data-nav="dashboard" class="mobile-nav-item active flex flex-col items-center gap-0.5 text-indigo-400 transition-all p-2 relative">
                 <i class="fa-solid fa-chart-pie text-sm"></i><span class="text-[8px] font-bold">Home</span>
@@ -862,9 +881,142 @@
         </nav>
     </main>
 
+    </div>
+
 <script>
 (function() {
     'use strict';
+
+    // ==================== FIREBASE ====================
+    var firebaseReady = false;
+    var db = null;
+    var auth = null;
+    var unsubscribeFirestore = null;
+    var USE_FIREBASE = false;
+
+    function initFirebase() {
+        var firebaseConfig = window.firebaseConfig || (typeof firebaseConfig !== 'undefined' ? firebaseConfig : null);
+        if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf('COLOQUE') === 0) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-content').style.setProperty('display', 'flex', 'important');
+            return;
+        }
+        try {
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig || window.firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+            USE_FIREBASE = true;
+            firebase.auth().onAuthStateChanged(onAuthStateChanged);
+        } catch (e) {
+            console.error('Firebase init error:', e);
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-content').style.setProperty('display', 'flex', 'important');
+        }
+    }
+
+    function onAuthStateChanged(user) {
+        var loginScreen = document.getElementById('login-screen');
+        var appContent = document.getElementById('app-content');
+        if (user) {
+            loginScreen.classList.add('hidden');
+            appContent.style.setProperty('display', 'flex', 'important');
+            loadFromFirestore(user.uid);
+            setupFirestoreListener(user.uid);
+        } else {
+            loginScreen.classList.remove('hidden');
+            appContent.style.setProperty('display', 'none', 'important');
+            if (unsubscribeFirestore) { unsubscribeFirestore(); unsubscribeFirestore = null; }
+        }
+    }
+
+    function loadFromFirestore(uid) {
+        if (!db) return;
+        db.collection('users').doc(uid).get().then(function(doc) {
+            if (doc.exists && doc.data().data) {
+                var d = doc.data().data;
+                Object.keys(d).forEach(function(k) { state[k] = d[k]; });
+                if (!state.settings) state.settings = { name1:'Eduardo', name2:'Klara', sound:true };
+                state.piggy.forEach(function(p){ if(!p.color) p.color='indigo'; if(!p.deposits) p.deposits=[]; });
+            } else {
+                // Migrar dados do localStorage na primeira conexão
+                var local = localStorage.getItem('infinity_v5');
+                if (local) {
+                    try {
+                        var localData = JSON.parse(local);
+                        state.finance = localData.finance || state.finance;
+                        state.weekend = localData.weekend || state.weekend;
+                        state.piggy = localData.piggy || state.piggy;
+                        state.monthlyArchive = localData.monthlyArchive || state.monthlyArchive;
+                        state.settings = localData.settings || state.settings;
+                        saveToFirestore();
+                    } catch(e) {}
+                }
+            }
+            firebaseReady = true;
+            render();
+        }).catch(function(err) {
+            console.error('Firestore load error:', err);
+            firebaseReady = true;
+            render();
+        });
+    }
+
+    function setupFirestoreListener(uid) {
+        if (!db) return;
+        unsubscribeFirestore = db.collection('users').doc(uid).onSnapshot(function(snap) {
+            if (!firebaseReady || !snap.exists) return;
+            var d = snap.data().data;
+            if (!d) return;
+            Object.keys(d).forEach(function(k) { state[k] = d[k]; });
+            state.piggy.forEach(function(p){ if(!p.color) p.color='indigo'; if(!p.deposits) p.deposits=[]; });
+            render();
+        });
+    }
+
+    function saveToFirestore() {
+        if (!USE_FIREBASE || !auth || !auth.currentUser || !db) return;
+        var uid = auth.currentUser.uid;
+        var data = { finance: state.finance, weekend: state.weekend, piggy: state.piggy, monthlyArchive: state.monthlyArchive, settings: state.settings };
+        db.collection('users').doc(uid).set({ data: data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(function(err) {
+            console.error('Firestore save error:', err);
+        });
+    }
+
+    function setupLoginForm() {
+        var form = document.getElementById('login-form');
+        var errEl = document.getElementById('login-error');
+        var btn = document.getElementById('login-btn');
+        if (!form || !auth) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = document.getElementById('login-email').value.trim();
+            var pass = document.getElementById('login-password').value;
+            errEl.textContent = '';
+            errEl.classList.remove('visible');
+            btn.disabled = true;
+            form.classList.add('login-loading');
+            auth.signInWithEmailAndPassword(email, pass).then(function() {
+                form.reset();
+            }).catch(function(err) {
+                errEl.textContent = err.message || 'Erro ao entrar. Verifique e-mail e senha.';
+                errEl.classList.add('visible');
+            }).finally(function() {
+                btn.disabled = false;
+                form.classList.remove('login-loading');
+            });
+        });
+    }
+
+    function setupLogout() {
+        var btn = document.getElementById('btn-logout');
+        if (!btn) return;
+        if (auth) {
+            btn.style.display = '';
+            btn.addEventListener('click', function() { auth.signOut(); });
+        } else {
+            btn.style.display = 'none';
+        }
+    }
 
     // ==================== CONFIG ====================
     var CATS = {
@@ -954,7 +1106,11 @@
         if(Math.abs(v)>=1000) return 'R$ '+(v/1000).toFixed(1)+'k'; 
         return fmt(v); 
     };
-    var save = function() { localStorage.setItem('infinity_v5', JSON.stringify(state)); render(); };
+    var save = function() { 
+        localStorage.setItem('infinity_v5', JSON.stringify(state)); 
+        if (typeof saveToFirestore === 'function') saveToFirestore();
+        render(); 
+    };
     var genId = function() { return Date.now() + Math.floor(Math.random()*1000); };
 
     // ==================== SOUND ====================
@@ -1894,13 +2050,19 @@
     }
 
     // ==================== INIT ====================
+    initFirebase();
+    setupLoginForm();
+    setupLogout();
     buildCatChips();
     finCalc();
     archiveMonth();
     render();
 
-    // Auto-save interval
-    setInterval(function(){ localStorage.setItem('infinity_v5', JSON.stringify(state)); }, 30000);
+    // Auto-save interval (localStorage + Firestore)
+    setInterval(function(){ 
+        localStorage.setItem('infinity_v5', JSON.stringify(state)); 
+        if (typeof saveToFirestore === 'function') saveToFirestore();
+    }, 30000);
 
     // Visibility change - refresh on return
     document.addEventListener('visibilitychange', function(){
